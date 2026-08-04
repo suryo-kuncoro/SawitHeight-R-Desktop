@@ -7,9 +7,9 @@
   "license": "UNLICENSED",
   "scripts": {
     "start": "electron .",
-    "dist": "electron-builder --win --x64",
-    "dist:portable": "electron-builder --win portable --x64",
-    "dist:installer": "electron-builder --win nsis --x64"
+    "dist": "electron-builder --win --x64--publish never",
+    "dist:portable": "electron-builder --win portable --x64--publish never",
+    "dist:installer": "electron-builder --win nsis --x64--publish never"
   },
   "devDependencies": {
     "electron": "43.0.0",
