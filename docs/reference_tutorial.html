@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tutorial Fotogrametri — Tinggi Pohon Sawit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-deep:#0B0F11;
+  --bg-panel:#12181B;
+  --bg-panel-2:#171F22;
+  --bg-code:#0D1315;
+  --border:#263135;
+  --border-soft:#1C2528;
+  --text-primary:#E7EDEE;
+  --text-secondary:#8FA0A4;
+  --text-muted:#546366;
+  --accent:#E3A73F;
+  --accent-dim:#5A4118;
+  --accent-glow:rgba(227,167,63,0.13);
+  --warn-text:#E8C468; --warn-border:#8A6A1E; --warn-bg:#20190E;
+  --danger-text:#E88A82; --danger-border:#8A3A32; --danger-bg:#1F1211;
+  --info-text:#8FC7D6; --info-border:#2E5F6E; --info-bg:#0F1B1E;
+  --success-text:#8FCBA0; --success-border:#2E6E48; --success-bg:#0E1C15;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg-deep);
+  color:var(--text-primary);
+  font-family:'IBM Plex Sans',sans-serif;
+  min-height:100vh;
+  position:relative;
+}
+body::before{
+  content:'';
+  position:fixed; inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cg fill='none' stroke='%23E3A73F' stroke-opacity='0.035' stroke-width='1'%3E%3Cpath d='M-20 40 Q100 10 200 60 T420 30'/%3E%3Cpath d='M-20 90 Q100 60 200 110 T420 80'/%3E%3Cpath d='M-20 140 Q100 110 200 160 T420 130'/%3E%3Cpath d='M-20 190 Q100 160 200 210 T420 180'/%3E%3Cpath d='M-20 240 Q100 210 200 260 T420 230'/%3E%3Cpath d='M-20 290 Q100 260 200 310 T420 280'/%3E%3Cpath d='M-20 340 Q100 310 200 360 T420 330'/%3E%3C/g%3E%3C/svg%3E");
+  background-size:500px 500px;
+  pointer-events:none;
+  z-index:0;
+}
+.wrap{position:relative; z-index:1; display:flex; max-width:1400px; margin:0 auto;}
+
+/* ===== SIDEBAR ===== */
+.sidebar{
+  width:280px; flex-shrink:0;
+  position:sticky; top:0; height:100vh;
+  border-right:1px solid var(--border);
+  padding:28px 0 28px 0;
+  display:flex; flex-direction:column;
+  overflow-y:auto;
+}
+.brand{padding:0 24px 20px 24px; border-bottom:1px solid var(--border-soft); margin-bottom:8px;}
+.brand-eyebrow{font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.15em; color:var(--accent); text-transform:uppercase;}
+.brand-title{font-family:'Space Grotesk',sans-serif; font-size:17px; font-weight:600; margin-top:6px; line-height:1.3;}
+.nav-list{display:flex; flex-direction:column; padding:8px 12px; gap:2px; flex:1;}
+.nav-item{
+  display:flex; align-items:center; gap:10px;
+  padding:9px 12px; border-radius:6px;
+  text-decoration:none; color:var(--text-secondary);
+  font-size:13px; transition:background 0.15s, color 0.15s;
+  border-left:2px solid transparent;
+}
+.nav-item:hover{background:var(--bg-panel-2); color:var(--text-primary);}
+.nav-item.active{background:var(--accent-glow); color:var(--accent); border-left:2px solid var(--accent);}
+.nav-code{font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--text-muted); min-width:22px;}
+.nav-item.active .nav-code{color:var(--accent);}
+.nav-label{white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.progress-box{padding:16px 24px 0 24px; border-top:1px solid var(--border-soft); margin-top:8px;}
+.progress-label{font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--text-muted); letter-spacing:0.1em; margin-bottom:8px; display:flex; justify-content:space-between;}
+.progress-track{height:4px; background:var(--bg-panel-2); border-radius:2px; overflow:hidden;}
+.progress-fill{height:100%; background:var(--accent); width:0%; transition:width 0.3s;}
+
+/* ===== MAIN ===== */
+.main{flex:1; min-width:0; padding:48px 56px 120px 56px;}
+
+.hero{margin-bottom:56px;}
+.hero-eyebrow{
+  font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.15em;
+  color:var(--accent); text-transform:uppercase; display:flex; align-items:center; gap:8px;
+}
+.hero-eyebrow::before{content:''; width:20px; height:1px; background:var(--accent);}
+.hero h1{
+  font-family:'Space Grotesk',sans-serif; font-weight:700;
+  font-size:42px; line-height:1.15; margin:14px 0 16px 0;
+  max-width:720px;
+}
+.hero-sub{font-size:16px; color:var(--text-secondary); max-width:600px; line-height:1.6; margin-bottom:28px;}
+.readout{display:flex; flex-wrap:wrap; gap:10px;}
+.readout-chip{
+  font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--text-secondary);
+  border:1px solid var(--border); padding:6px 12px; border-radius:5px;
+  background:var(--bg-panel); display:flex; align-items:center; gap:6px;
+}
+.readout-chip b{color:var(--accent); font-weight:600;}
+
+/* ===== STEP ===== */
+.step{padding-top:36px; margin-top:8px; scroll-margin-top:24px;}
+.step-head{display:flex; align-items:flex-start; gap:18px; margin-bottom:22px;}
+.monument{
+  width:52px; height:52px; border-radius:50%;
+  border:2px solid var(--accent);
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0; position:relative;
+  background:var(--accent-glow);
+}
+.monument::before, .monument::after{
+  content:''; position:absolute; background:var(--accent);
+}
+.monument::before{width:8px; height:1px; top:50%; left:-11px;}
+.monument::after{width:8px; height:1px; top:50%; right:-11px;}
+.monument span{font-family:'IBM Plex Mono',monospace; font-size:13px; font-weight:600; color:var(--accent);}
+.step-title-wrap{flex:1; padding-top:4px;}
+.step-title-wrap h2{font-family:'Space Grotesk',sans-serif; font-size:23px; font-weight:600;}
+.step-blurb{color:var(--text-secondary); font-size:14px; margin-top:4px;}
+.done-toggle{
+  display:flex; align-items:center; gap:6px; padding-top:8px;
+  font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--text-muted);
+  cursor:pointer; user-select:none; letter-spacing:0.05em; text-transform:uppercase;
+}
+.done-toggle input{accent-color:var(--accent); width:14px; height:14px; cursor:pointer;}
+.step.is-done .step-title-wrap h2{color:var(--text-secondary); text-decoration:line-through; text-decoration-color:var(--border);}
+.step.is-done .monument{background:var(--accent); }
+.step.is-done .monument span{color:var(--bg-deep);}
+
+.step-body{padding-left:70px; border-left:1px solid var(--border-soft); margin-left:26px; padding-bottom:8px;}
+.body-text{color:var(--text-secondary); font-size:14.5px; line-height:1.75; margin-bottom:16px; max-width:680px;}
+.sub-head{font-family:'Space Grotesk',sans-serif; font-size:15px; font-weight:600; margin:24px 0 10px 0; color:var(--text-primary);}
+
+.code-block{
+  background:var(--bg-code); border:1px solid var(--border);
+  border-radius:8px; overflow:hidden; margin-bottom:18px; max-width:720px;
+}
+.code-bar{
+  display:flex; justify-content:space-between; align-items:center;
+  padding:8px 14px; border-bottom:1px solid var(--border);
+  font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.1em;
+  color:var(--text-muted);
+}
+.copy-btn{
+  background:transparent; border:1px solid var(--border); color:var(--text-secondary);
+  font-family:'IBM Plex Mono',monospace; font-size:10px; padding:3px 9px; border-radius:4px;
+  cursor:pointer; letter-spacing:0.05em; transition:all 0.15s;
+}
+.copy-btn:hover{border-color:var(--accent); color:var(--accent);}
+.copy-btn.copied{border-color:var(--success-text); color:var(--success-text);}
+.code-block pre{padding:14px 16px; overflow-x:auto;}
+.code-block code{
+  font-family:'IBM Plex Mono',monospace; font-size:12.5px; line-height:1.7;
+  color:#C9D4D6; white-space:pre;
+}
+
+.callout{
+  border-radius:8px; padding:14px 16px; margin-bottom:18px; max-width:680px;
+  border-left:3px solid; font-size:13.5px; line-height:1.65;
+}
+.callout-head{
+  display:flex; align-items:center; gap:8px; font-weight:600; margin-bottom:6px;
+  font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.05em; text-transform:uppercase;
+}
+.callout-icon{font-size:11px;}
+.callout-text{color:var(--text-secondary);}
+.callout-info{background:var(--info-bg); border-color:var(--info-border);}
+.callout-info .callout-head{color:var(--info-text);}
+.callout-warn{background:var(--warn-bg); border-color:var(--warn-border);}
+.callout-warn .callout-head{color:var(--warn-text);}
+.callout-danger{background:var(--danger-bg); border-color:var(--danger-border);}
+.callout-danger .callout-head{color:var(--danger-text);}
+.callout-success{background:var(--success-bg); border-color:var(--success-border);}
+.callout-success .callout-head{color:var(--success-text);}
+
+.footer-note{
+  margin-top:60px; padding-top:24px; border-top:1px solid var(--border-soft);
+  font-size:12.5px; color:var(--text-muted); max-width:680px; line-height:1.7;
+}
+
+@media (max-width:900px){
+  .sidebar{display:none;}
+  .main{padding:32px 20px 100px 20px;}
+  .hero h1{font-size:30px;}
+  .step-body{padding-left:0; margin-left:0; border-left:none;}
+  .step-head{flex-wrap:wrap;}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav class="sidebar">
+    <div class="brand">
+      <div class="brand-eyebrow">SfM-MVS · Dense Cloud</div>
+      <div class="brand-title">Tinggi Pohon dari Fotogrametri</div>
+    </div>
+    <div class="nav-list">
+      <a href="#st00" class="nav-item" data-target="st00">
+    <span class="nav-code">00</span><span class="nav-label">Persiapan Environment R</span>
+  </a>
+<a href="#st01" class="nav-item" data-target="st01">
+    <span class="nav-code">01</span><span class="nav-label">Load Dense Point Cloud</span>
+  </a>
+<a href="#st02" class="nav-item" data-target="st02">
+    <span class="nav-code">02</span><span class="nav-label">Quality Check Point Cloud</span>
+  </a>
+<a href="#st03" class="nav-item" data-target="st03">
+    <span class="nav-code">03</span><span class="nav-label">Klasifikasi Ground</span>
+  </a>
+<a href="#st03b" class="nav-item" data-target="st03b">
+    <span class="nav-code">03B</span><span class="nav-label">DTM Independen</span>
+  </a>
+<a href="#st04" class="nav-item" data-target="st04">
+    <span class="nav-code">04</span><span class="nav-label">Normalisasi Point Cloud (TIN)</span>
+  </a>
+<a href="#st05" class="nav-item" data-target="st05">
+    <span class="nav-code">05</span><span class="nav-label">Generate nCHM</span>
+  </a>
+<a href="#st06" class="nav-item" data-target="st06">
+    <span class="nav-code">06</span><span class="nav-label">Zonal Statistics — Buffer 2m</span>
+  </a>
+<a href="#st07" class="nav-item" data-target="st07">
+    <span class="nav-code">07</span><span class="nav-label">Klasifikasi & Export</span>
+  </a>
+    </div>
+    <div class="progress-box">
+      <div class="progress-label"><span>PROGRES</span><span id="progress-count">0/9</span></div>
+      <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+    </div>
+  </nav>
+
+  <main class="main">
+    <div class="hero">
+      <div class="hero-eyebrow">SfM-MVS · Dense Cloud</div>
+      <h1>Estimasi Tinggi Pohon Sawit dari Dense Point Cloud Fotogrametri</h1>
+      <p class="hero-sub">Panduan step-by-step di R/lidR — dari dense cloud UAV hasil SfM-MVS hingga tinggi pohon di titik pokok ground-truth Anda, buffer 2 meter.</p>
+      <div class="readout">
+        <div class="readout-chip">SUMBER <b>Foto Udara (SfM-MVS)</b></div><div class="readout-chip">TOOL <b>R · lidR</b></div><div class="readout-chip">OUTPUT <b>CSV / SHP / GeoTIFF</b></div><div class="readout-chip">PENETRASI KANOPI <b>Nihil</b></div>
+      </div>
+    </div>
+
+    
+    <section class="step" id="st00" data-idx="0">
+      <div class="step-head">
+        <div class="monument"><span>00</span></div>
+        <div class="step-title-wrap">
+          <h2>Persiapan Environment R</h2>
+          <p class="step-blurb">Install & load package, atur folder kerja.</p>
+        </div>
+        <label class="done-toggle">
+          <input type="checkbox" onchange="toggleDone('st00', this)">
+          <span>selesai</span>
+        </label>
+      </div>
+      <div class="step-body">
+        <p class="body-text">Buka RStudio. Semua kode berikut diketik di panel Console (area dengan tanda ">"), lalu tekan Enter.</p>
+<h4 class="sub-head">Install package</h4>
+<div class="code-block">
+        <div class="code-bar"><span>R CONSOLE</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <pre><code>install.packages("lidR")
+install.packages("terra")
+install.packages("sf")
+install.packages("tidyverse")
+install.packages("exactextractr")</code></pre>
+      </div>
+<div class="callout callout-warn">
+        <div class="callout-head"><span class="callout-icon">▲</span>Catatan instalasi</div>
+        <div class="callout-text">Jika muncul "Do you want to install from sources..." ketik no lalu Enter. Pesan kuning (warning) normal — hanya pesan merah "Error" yang berarti masalah.</div>
+      </div>
+<h4 class="sub-head">Load package</h4>
+<div class="code-block">
+        <div class="code-bar"><span>R CONSOLE</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <pre><code>library(lidR)
+library(terra)
+library(sf)
+library(tidyverse)
+library(exactextractr)</code></pre>
+      </div>
+<h4 class="sub-head">Set working directory</h4>
+<div class="code-block">
+        <div class="code-bar"><span>R CONSOLE</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <pre><code>setwd("C:/Project/SawitMuda/Analysis")
+dir.create("output", showWarnings = FALSE)</code></pre>
+      </div>
+      </div>
+    </section>
+
+    <section class="step" id="st01" data-idx="1">
+      <div class="step-head">
+        <div class="monument"><span>01</span></div>
+        <div class="step-title-wrap">
+          <h2>Load Dense Point Cloud</h2>
+          <p class="step-blurb">Import hasil export dense cloud fotogrametri.</p>
+        </div>
+        <label class="done-toggle">
+          <input type="checkbox" onchange="toggleDone('st01', this)">
+          <span>selesai</span>
+        </label>
+      </div>
+      <div class="step-body">
+        <p class="body-text">Load file LAS/LAZ hasil export dense cloud dari software fotogrametri (Pix4D, Metashape, DJI Terra). Data ini BELUM memiliki klasifikasi ground yang valid — masih mentah untuk sebagian besar area.</p>
+<div class="code-block">
+        <div class="code-bar"><span>R CONSOLE</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <pre><code>las &lt;- readLAS("dense_cloud_orth.las")
+
+summary(las)
+st_crs(las)</code></pre>
+      </div>
+<div class="callout callout-warn">
+        <div class="callout-head"><span class="callout-icon">▲</span>Jika CRS kosong / NA</div>
+        <div class="callout-text">Set manual dengan EPSG sesuai lokasi, misal UTM Zona 48S:<br>st_crs(las) <- 32748</div>
+      </div>
+<div class="callout callout-info">
+        <div class="callout-head"><span class="callout-icon">◆</span>Cek densitas dulu</div>
+        <div class="callout-text">GSD foto 5cm TIDAK sama dengan jarak antar titik dense cloud. Resolusi CHM nanti ditentukan dari densitas riil (Step 02), bukan GSD kamera.</div>
+      </div>
+<div class="code-block">
+        <div class="code-bar"><span>R CONSOLE</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <pre><code>plot(las, size = 2, bg = "white")</code></pre>
+      </div>
+      </div>
+    </section>
+
+    <section class="step" id="st02" data-idx="2">
+      <div class="step-head">
+        <div class="monument"><span>02</span></div>
+        <div class="step-title-wrap">
+          <h2>Quality Check Point Cloud</h2>
+          <p class="step-blurb">Cek densitas, noise, dan duplikat sebelum diproses lebih lanjut.</p>
+        </div>
+        <label class="done-toggle">
+          <input type="checkbox" onchange="toggleDone('st02', this)">
+          <span>selesai</span>
+        </label>
+      </div>
+      <div class="step-body">
+        <p class="body-text">Tahap krusial — data yang kotor akan menghasilkan tinggi pohon yang salah.</p>
+<h4 class="sub-head">2.1 — Cek densitas & hitung resolusi CHM ideal</h4>
+<div class="code-block">
+        <div class="code-bar"><span>R CONSOLE</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <pre><code>density &lt;- rasterize_density(las, res = 1)
+plot(density, col = height.colors(50))
+
+avg_density &lt;- mean(values(density), na.rm = TRUE)
+avg_spacing &lt;- 1 / sqrt(avg_density)
+res_chm &lt;- round(avg_spacing * 2, 2)
+
+cat("Densitas:", round(avg_density,1), "titik/m2\n")
+cat("Spacing:", round(avg_spacing,3), "meter\n")
+cat("Resolusi CHM disarankan:", res_chm, "meter\n")</code></pre>
+      </div>
+<div class="callout callout-warn">
+        <div class="callout-head"><span class="callout-icon">▲</span>Kenapa bukan GSD foto langsung</div>
+        <div class="callout-text">Densitas dense cloud riil bisa jauh lebih rendah dari GSD foto tergantung tekstur permukaan & overlap. Aturan: resolusi raster ≥ 2x point spacing riil.</div>
+      </div>
+<h4 class="sub-head">2.2 — Bersihkan noise & duplikat</h4>
+<div class="code-block">
+        <div class="code-bar"><span>R CONSOLE</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <pre><code>las &lt;- filter_duplicates(las)
+las &lt;- classify_noise(las, sor(k = 10, m = 3))
+las &lt;- filter_poi(las, Classification != LASNOISE)</code></pre>
+      </div>
+      </div>
+    </section>
+
+    <section class="step" id="st03" data-idx="3">
+      <div class="step-head">
+        <div class="monument"><span>03</span></div>
+        <div class="step-title-wrap">
+          <h2>Klasifikasi Ground</h2>
+          <p class="step-blurb">Klasifikasi dari nol dengan CSF — ekspektasi hasil lebih jarang.</p>
+        </div>
+        <label class="done-toggle">
+          <input type="checkbox" onchange="toggleDone('st03', this)">
+          <span>selesai</span>
+        </label>
+      </div>
+      <div class="step-body">
+        <p class="body-text">Dense cloud fotogrametri belum pernah diklasifikasi — ini klasifikasi dari nol, hasilnya wajar jauh lebih jarang di bawah tajuk dibanding LiDAR.</p>
+<div class="code-block">
+        <div class="code-bar"><span>R CONSOLE</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <pre><code>las &lt;- classify_ground(las, csf(
+  cloth_resolution = 0.5,
+  class_threshold = 0.3,
+  rigidness = 2
+))
+
+table(las$Classification)
+pct_ground &lt;- sum(las$Classification == 2) / npoints(las) * 100
+cat("Persentase ground:", round(pct_ground,1), "%\n")</code></pre>
+      </div>
+<div class="callout callout-warn">
+        <div class="callout-head"><span class="callout-icon">▲</span>Ekspektasi proporsi ground</div>
+        <div class="callout-text">Wajar berkisar 10–25% tergantung lebar gawangan terbuka. Jika < 5%, gawangan sudah tertutup — pertimbangkan DTM independen (Step 03B).</div>
+      </div>
+<h4 class="sub-head">Visualisasi & cross-section check</h4>
+<div class="code-block">
+        <div class="code-bar"><span>R CONSOLE</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <pre><code>plot(las, color = "Classification", size = 2, bg = "white")</code></pre>
+      </div>
+<div class="code-block">
+        <div class="code-bar"><span>R CONSOLE</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <pre><code>p1 &lt;- c(min(las$X), mean(las$Y)); p2 &lt;- c(max(las$X), mean(las$Y))
+las_tr &lt;- clip_transect(las, p1, p2, width = 3)
+ggplot(payload(las_tr), aes(X, Z, color = Classification)) +
+  geom_point(size = 0.5) + coord_equal() + theme_minimal()</code></pre>
+      </div>
+      </div>
+    </section>
+
+    <section class="step" id="st03b" data-idx="4">
+      <div class="step-head">
+        <div class="monument"><span>03B</span></div>
+        <div class="step-title-wrap">
+          <h2>DTM Independen</h2>
+          <p class="step-blurb">Sangat disarankan — referensi tanah dari sumber terpisah.</p>
+        </div>
+        <label class="done-toggle">
+          <input type="checkbox" onchange="toggleDone('st03b', this)">
+          <span>selesai</span>
+        </label>
+      </div>
+      <div class="step-body">
+        <div class="callout callout-danger">
+        <div class="callout-head"><span class="callout-icon">✕</span>Rekomendasi terkuat</div>
+        <div class="callout-text">Jika Anda punya DTM dari survei sebelum tanam atau LiDAR terpisah — gunakan itu sebagai referensi tanah, BUKAN menurunkan ground dari dense cloud ini. Jauh lebih andal karena tidak bergantung pada gawangan terbuka.</div>
+      </div>
+<div class="code-block">
+        <div class="code-bar"><span>R CONSOLE</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <pre><code>dtm_external &lt;- rast("data/DTM_sebelum_tanam.tif")
+nlas &lt;- normalize_height(las, dtm_external)
+
+# Jika tidak ada, lanjut ke Step 04 dengan ground point sendiri</code></pre>
+      </div>
+      </div>
+    </section>
+
+    <section class="step" id="st04" data-idx="5">
+      <div class="step-head">
+        <div class="monument"><span>04</span></div>
+        <div class="step-title-wrap">
+          <h2>Normalisasi Point Cloud (TIN)</h2>
+          <p class="step-blurb">Koreksi tinggi per titik langsung terhadap ground terdekat.</p>
+        </div>
+        <label class="done-toggle">
+          <input type="checkbox" onchange="toggleDone('st04', this)">
+          <span>selesai</span>
+        </label>
+      </div>
+      <div class="step-body">
+        <p class="body-text">Tahap terpenting — setiap titik dikoreksi terhadap ground point terdekat langsung di point cloud, tanpa DTM raster yang rentan error interpolasi.</p>
+<div class="code-block">
+        <div class="code-bar"><span>R CONSOLE</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <pre><code>nlas &lt;- normalize_height(las, tin())
+
+gnd &lt;- filter_ground(nlas)
+summary(gnd$Z)</code></pre>
+      </div>
+<div class="callout callout-success">
+        <div class="callout-head"><span class="callout-icon">✓</span>Kenapa TIN, bukan raster DTM</div>
+        <div class="callout-text">Triangulasi langsung antar ground point jauh lebih presisi dibanding kurangkan terhadap raster DTM yang sudah dibulatkan ke ukuran piksel.</div>
+      </div>
+<h4 class="sub-head">Validasi — nilai Z ground harus ≈ 0</h4>
+<div class="code-block">
+        <div class="code-bar"><span>R CONSOLE</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <pre><code>cat("Ground Z min:", min(gnd$Z), "\n")
+cat("Ground Z max:", max(gnd$Z), "\n")
+cat("Ground Z mean:", mean(gnd$Z), "\n")</code></pre>
+      </div>
+<div class="code-block">
+        <div class="code-bar"><span>R CONSOLE</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <pre><code>nlas &lt;- filter_poi(nlas, Z &gt;= -0.1)
+writeLAS(nlas, "output/normalized_pointcloud.laz")</code></pre>
+      </div>
+      </div>
+    </section>
+
+    <section class="step" id="st05" data-idx="6">
+      <div class="step-head">
+        <div class="monument"><span>05</span></div>
+        <div class="step-title-wrap">
+          <h2>Generate nCHM</h2>
+          <p class="step-blurb">Ubah point cloud ternormalisasi menjadi raster tinggi kanopi.</p>
+        </div>
+        <label class="done-toggle">
+          <input type="checkbox" onchange="toggleDone('st05', this)">
+          <span>selesai</span>
+        </label>
+      </div>
+      <div class="step-body">
+        <p class="body-text">Karena point cloud sudah ternormalisasi, nilai Z tiap titik sudah langsung merepresentasikan tinggi di atas tanah.</p>
+<div class="code-block">
+        <div class="code-bar"><span>R CONSOLE</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <pre><code>chm &lt;- rasterize_canopy(
+  nlas, res = res_chm,
+  algorithm = pitfree(
+    thresholds = c(0, 2, 5, 10),
+    max_edge = c(0, 1.5)
+  )
+)
+plot(chm, col = height.colors(50))
+
+na_pct &lt;- sum(is.na(values(chm))) / length(values(chm)) * 100
+cat("Piksel NA:", round(na_pct,1), "%\n")</code></pre>
+      </div>
+<div class="callout callout-warn">
+        <div class="callout-head"><span class="callout-icon">▲</span>Jika NA > 10%</div>
+        <div class="callout-text">Naikkan res_chm bertahap (0.1m → 0.15m) sampai NA di bawah 5-10%. NA berarti tidak ada dukungan titik sama sekali di lokasi tersebut.</div>
+      </div>
+<div class="code-block">
+        <div class="code-bar"><span>R CONSOLE</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <pre><code>writeRaster(chm, "output/nCHM_sawit.tif", overwrite = TRUE)</code></pre>
+      </div>
+      </div>
+    </section>
+
+    <section class="step" id="st06" data-idx="7">
+      <div class="step-head">
+        <div class="monument"><span>06</span></div>
+        <div class="step-title-wrap">
+          <h2>Zonal Statistics — Buffer 2m</h2>
+          <p class="step-blurb">Ekstrak tinggi di titik pokok ground-truth, dengan masking non-kanopi.</p>
+        </div>
+        <label class="done-toggle">
+          <input type="checkbox" onchange="toggleDone('st06', this)">
+          <span>selesai</span>
+        </label>
+      </div>
+      <div class="step-body">
+        <p class="body-text">Karena Anda sudah punya titik pokok sawit sebagai ground-truth, posisi pohon sudah pasti benar — tinggal ambil statistik tinggi dari nCHM di sekitarnya.</p>
+<div class="code-block">
+        <div class="code-bar"><span>R CONSOLE</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <pre><code>titik_pokok &lt;- st_read("data/titik_pokok_sawit.shp")
+titik_pokok &lt;- st_transform(titik_pokok, st_crs(chm))
+buffer_pokok &lt;- st_buffer(titik_pokok, dist = 2)</code></pre>
+      </div>
+<div class="callout callout-danger">
+        <div class="callout-head"><span class="callout-icon">✕</span>Masalah tersembunyi: piksel non-kanopi ikut terhitung</div>
+        <div class="callout-text">exact_extract mengecualikan NA, tapi nilai 0 BUKAN NA — piksel tanah/gawangan yang kebetulan masuk radius buffer 2m tetap dihitung sebagai data valid dan menarik rerata ke bawah. Untuk sawit muda bertajuk sempit, ini bisa signifikan: buffer 2m (diameter 4m) sering mencakup area di luar tajuk.</div>
+      </div>
+<h4 class="sub-head">6.1 — Tentukan threshold kanopi & cek distribusi nilai</h4>
+<div class="code-block">
+        <div class="code-bar"><span>R CONSOLE</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <pre><code>hist(values(chm), breaks = 50, main = 'Distribusi nilai nCHM')
+# Cari lembah antara gerombolan nilai dekat 0 (tanah)
+# dan gerombolan nilai tinggi tajuk sebenarnya</code></pre>
+      </div>
+<h4 class="sub-head">6.2 — Mask piksel di bawah threshold sebelum ekstraksi</h4>
+<div class="code-block">
+        <div class="code-bar"><span>R CONSOLE</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <pre><code>threshold_kanopi &lt;- 0.5  # meter — sesuaikan dgn tinggi sawit termuda
+
+chm_masked &lt;- chm
+chm_masked[chm_masked &lt; threshold_kanopi] &lt;- NA</code></pre>
+      </div>
+<h4 class="sub-head">6.3 — Ekstrak statistik dari CHM yang sudah di-mask</h4>
+<div class="code-block">
+        <div class="code-bar"><span>R CONSOLE</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <pre><code>stats &lt;- exact_extract(
+  chm_masked, buffer_pokok,
+  fun = c("mean", "max", "min", "stdev", "count")
+)
+
+titik_pokok &lt;- titik_pokok %&gt;% bind_cols(stats) %&gt;%
+  rename(tinggi_rerata = mean, tinggi_maks = max,
+         tinggi_min = min, tinggi_sd = stdev, n_piksel_kanopi = count)</code></pre>
+      </div>
+<h4 class="sub-head">6.4 — Tambahan: persentase tutupan kanopi dalam buffer</h4>
+<p class="body-text">Metrik ekstra yang berguna untuk validasi silang — proporsi buffer yang benar-benar tajuk vs total area buffer, indikasi kepadatan/kesehatan kanopi:</p>
+<div class="code-block">
+        <div class="code-bar"><span>R CONSOLE</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <pre><code>stats_total  &lt;- exact_extract(chm, buffer_pokok, fun = "count")
+stats_kanopi &lt;- exact_extract(chm_masked, buffer_pokok, fun = "count")
+
+titik_pokok$pct_tutupan_kanopi &lt;- round(stats_kanopi / stats_total * 100, 1)</code></pre>
+      </div>
+<div class="callout callout-info">
+        <div class="callout-head"><span class="callout-icon">◆</span>Kenapa exactextractr</div>
+        <div class="callout-text">Menghitung fractional coverage — piksel yang sebagian masuk buffer tetap dihitung proporsional, bukan all-or-nothing. Penting karena buffer 2m hanya mencakup puluhan-ratusan piksel.</div>
+      </div>
+<div class="callout callout-warn">
+        <div class="callout-head"><span class="callout-icon">▲</span>Cek n_piksel_kanopi sebelum percaya hasilnya</div>
+        <div class="callout-text">Nilai ini sekarang berarti jumlah piksel KANOPI saja (setelah masking), bukan total piksel buffer. Jika n_piksel_kanopi sangat rendah (<10) di suatu titik, rerata tinggi kurang andal — tandai untuk validasi lapangan prioritas. Kombinasikan dengan pct_tutupan_kanopi rendah sebagai indikasi tambahan pohon terhambat/tajuk jarang.</div>
+      </div>
+      </div>
+    </section>
+
+    <section class="step" id="st07" data-idx="8">
+      <div class="step-head">
+        <div class="monument"><span>07</span></div>
+        <div class="step-title-wrap">
+          <h2>Klasifikasi & Export</h2>
+          <p class="step-blurb">Kelas tinggi pohon + export CSV, Shapefile, GeoTIFF.</p>
+        </div>
+        <label class="done-toggle">
+          <input type="checkbox" onchange="toggleDone('st07', this)">
+          <span>selesai</span>
+        </label>
+      </div>
+      <div class="step-body">
+        <div class="code-block">
+        <div class="code-bar"><span>R CONSOLE</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <pre><code>titik_pokok &lt;- titik_pokok %&gt;%
+  mutate(kelas_tinggi = case_when(
+    tinggi_rerata &lt; 1.5 ~ "Pendek (terhambat)",
+    tinggi_rerata &gt;= 1.5 &amp; tinggi_rerata &lt; 2.5 ~ "Sedang (normal)",
+    tinggi_rerata &gt;= 2.5 ~ "Tinggi (subur)",
+    TRUE ~ "Tidak terklasifikasi"
+  ))
+table(titik_pokok$kelas_tinggi)</code></pre>
+      </div>
+<h4 class="sub-head">Export hasil akhir</h4>
+<div class="code-block">
+        <div class="code-bar"><span>R CONSOLE</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+        <pre><code>write.csv(st_drop_geometry(titik_pokok), "output/tinggi_pokok_sawit.csv", row.names = FALSE)
+st_write(titik_pokok, "output/pokok_sawit_tinggi.shp", delete_layer = TRUE)
+st_write(buffer_pokok, "output/buffer_2m_pokok.shp", delete_layer = TRUE)</code></pre>
+      </div>
+<div class="callout callout-success">
+        <div class="callout-head"><span class="callout-icon">✓</span>Selesai</div>
+        <div class="callout-text">Output: CSV siap analisis, Shapefile titik dengan atribut tinggi, Shapefile buffer untuk QC visual, dan raster nCHM GeoTIFF.</div>
+      </div>
+      </div>
+    </section>
+
+    <div class="footer-note">
+      Dokumen ini untuk data dense cloud fotogrametri (SfM-MVS dari foto RGB). Karena sensor optik tidak menembus kanopi sama sekali, ground point hanya tersedia di area yang benar-benar terlihat kamera — gunakan DTM independen (Step 03B) jika tersedia untuk hasil paling andal.
+    </div>
+  </main>
+</div>
+
+<script>
+function copyCode(btn){
+  const code = btn.closest('.code-block').querySelector('code').innerText;
+  navigator.clipboard.writeText(code).then(() => {
+    btn.textContent = 'COPIED'; btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'COPY'; btn.classList.remove('copied'); }, 1500);
+  });
+}
+
+function updateProgress(){
+  const total = document.querySelectorAll('.step').length;
+  const done = document.querySelectorAll('.step.is-done').length;
+  document.getElementById('progress-count').textContent = done + '/' + total;
+  document.getElementById('progress-fill').style.width = (done/total*100) + '%';
+}
+
+function toggleDone(id, checkbox){
+  const step = document.getElementById(id);
+  step.classList.toggle('is-done', checkbox.checked);
+  updateProgress();
+}
+
+// Scrollspy
+const navItems = document.querySelectorAll('.nav-item');
+const stepSections = document.querySelectorAll('.step');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      navItems.forEach(n => n.classList.remove('active'));
+      const active = document.querySelector('.nav-item[data-target="'+entry.target.id+'"]');
+      if(active) active.classList.add('active');
+    }
+  });
+}, { rootMargin: '-15% 0px -70% 0px', threshold: 0 });
+stepSections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

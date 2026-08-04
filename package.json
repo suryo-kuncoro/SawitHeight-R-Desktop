@@ -1,0 +1,78 @@
+{
+  "name": "sawitheight-r-desktop",
+  "version": "0.1.0",
+  "description": "Aplikasi desktop analisis tinggi pohon sawit dari dense point cloud fotogrametri dengan backend R/lidR.",
+  "main": "src/main.js",
+  "author": "PMNP",
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win --x64",
+    "dist:portable": "electron-builder --win portable --x64",
+    "dist:installer": "electron-builder --win nsis --x64"
+  },
+  "devDependencies": {
+    "electron": "43.0.0",
+    "electron-builder": "26.0.12"
+  },
+  "build": {
+    "appId": "com.pmnp.sawitheight",
+    "productName": "SawitHeight R",
+    "asar": true,
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "src/**/*",
+      "assets/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "r",
+        "to": "r",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "vendor/R",
+        "to": "vendor/R",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "win": {
+      "icon": "assets/icon.ico",
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "portable": {
+      "artifactName": "SawitHeight-R-Portable-${version}.exe",
+      "requestExecutionLevel": "user"
+    },
+    "nsis": {
+      "artifactName": "SawitHeight-R-Setup-${version}.exe",
+      "oneClick": false,
+      "perMachine": false,
+      "allowElevation": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "SawitHeight R"
+    }
+  }
+}
